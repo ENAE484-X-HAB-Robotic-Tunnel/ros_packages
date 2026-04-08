@@ -1,0 +1,9 @@
+# Custom service to solve for the leg length
+# for a certain pose
+
+# Request
+stewart_interfaces/Pose pose
+
+---
+# Response
+stewart_interfaces/Lengths lengths
