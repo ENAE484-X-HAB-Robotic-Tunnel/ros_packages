@@ -3,7 +3,8 @@ from rclpy.node import Node
 import serial
 # Modify import based on actual message type
 # Using 64 bit float array for now
-from std_msgs.msg import Float64MultiArray
+# from std_msgs.msg import Float64MultiArray
+from stewart_interfaces import Velocity
 
 class JetsonSerial(Node):
     def __init__(self):
@@ -11,8 +12,8 @@ class JetsonSerial(Node):
             
             # Subscriber Initialization
             self.subscription = self.create_subscription(
-                  Float64MultiArray,
-                  'topic',
+                  Velocity,
+                  'motor-velocity',
                   self.listener_callback,
                   10)
             self.subscription
