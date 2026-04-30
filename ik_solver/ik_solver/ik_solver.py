@@ -18,7 +18,7 @@ class IkService(Node):
         super().__init__('ik_service')
         self.srv = self.create_service(IkRequest, 'ik_request', self.ik_request_callback)
         self.platform = StewartPlatform(base_r = 7, plat_r = 5, offset_deg = 7)
-        self.platform.set_Pose(X_base=[0, 0, 0, 0, 90, 0])
+        self.platform.set_Pose(X_base=[0, 0, 0, 0, 1.57, 0])
         
     
     def ik_request_callback(self, request, response):

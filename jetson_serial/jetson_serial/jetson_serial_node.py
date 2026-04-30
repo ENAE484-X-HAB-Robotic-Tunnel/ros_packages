@@ -4,7 +4,7 @@ import serial
 # Modify import based on actual message type
 # Using 64 bit float array for now
 # from std_msgs.msg import Float64MultiArray
-from stewart_interfaces import Velocity
+from stewart_interfaces.msg import Velocity
 
 class JetsonSerial(Node):
     def __init__(self):
@@ -13,27 +13,28 @@ class JetsonSerial(Node):
             # Subscriber Initialization
             self.subscription = self.create_subscription(
                   Velocity,
-                  'motor-velocity',
+                  'motor_velocity',
                   self.listener_callback,
                   10)
             self.subscription
             
             # Serial Initialization
             # Need to check the port and the baudrate
-            self.ser = serial.Serial(port = '/dev/ttyUSB0',
+            self.ser = serial.Serial(port = '/dev/ttyACM0',
                                      baudrate = 115200,
                                      timeout = 1)
 
     def listener_callback(self, msg):
-        data = msg.data
+        data = msg.velocity
 
         # Data length check in case it is imcomplete
-        if len(data) < 7:
+        if len(data) < 6:
             self.get_logger().warn("Received Incomplete Message")
             return
         
         # Format of string
-        str_format = "<" + ",".join([f"{x:.4f}" for x in data]) + ">"
+        # str_format = "<" + ",".join([f"{x:.4f}" for x in data]) + ">"
+        str_format = ",".join([f"{x:.4f}" for x in data])
 
         # Writing String to Arduino
         self.ser.write((str_format + "\n").encode('utf-8'))

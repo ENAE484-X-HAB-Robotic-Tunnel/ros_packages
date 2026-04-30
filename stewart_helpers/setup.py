@@ -13,7 +13,7 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='fisho',
+    maintainer='Frank Zhang',
     maintainer_email='fryuzhang@outlook.com',
     description='TODO: Package description',
     license='Apache-2.0',

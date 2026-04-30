@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'jetson_serial'
+package_name = 'stewart_pipeline'
 
 setup(
     name=package_name,
@@ -13,18 +13,14 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='maanav',
-    maintainer_email='msubram2@terpmail.umd.edu',
+    maintainer='Frank Zhang',
+    maintainer_email='fryuzhang@outlook.com',
     description='TODO: Package description',
-    license='TODO: License declaration',
-    extras_require={
-        'test': [
-            'pytest',
-        ],
-    },
+    license='Apache-2.0',
+    tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'jetson_serial_node = jetson_serial.jetson_serial_node:main',
+            'trag_gen = stewart_pipeline.trajectory_generation:main'
         ],
     },
 )

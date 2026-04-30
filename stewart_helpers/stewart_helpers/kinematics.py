@@ -22,7 +22,7 @@ def rpy2rot(rpy, deg = True):
     return Rz @ Ry @ Rx
 
 
-def rot2rpy(R, deg=True):    
+def rot2rpy(R, deg=False):    
     # cp = cos(pitch). If cp is 0, we are in gimbal lock.
     cp = np.sqrt(R[0, 0]**2 + R[1, 0]**2)
     singular = cp < 1e-6
@@ -54,7 +54,7 @@ def post_rotate(rpy):
     r, p, y = rpy
     return (r, p + pitch_offset, y)
 
-def solve_ik(X_base, X_goal, platform, deg = True):
+def solve_ik(X_base, X_goal, platform, deg = False):
         """
         Inputs:
         X_base: xyzrpy (m, m, m, deg, deg, deg)
