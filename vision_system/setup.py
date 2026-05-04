@@ -24,7 +24,8 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'vision_node = vision_system.vision_node:main'
+            'vision_node = vision_system.vision_node:main',
+            'pos_node = vision_system.pos_node:main',
         ],
     },
 )
