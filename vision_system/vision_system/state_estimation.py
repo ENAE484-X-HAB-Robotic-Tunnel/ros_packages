@@ -193,7 +193,7 @@ class Camera:
         # # live vid capture for webcam from laptop
         # self.cap = cv2.VideoCapture(id)
 
-        # # Video Test
+        # Video Test
         self.cap = cv2.VideoCapture("/mnt/c/Users/maana/Videos/Captures/HatchTest.mp4")
 
         # # Arducam Initialization
