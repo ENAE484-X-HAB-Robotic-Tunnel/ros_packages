@@ -76,7 +76,7 @@ class Platform:
         ])
 
     def updateTarget(self):
-        poses_platform = []; target_R = None; target_t = None
+        frames = []; poses_platform = []; target_R = None; target_t = None
         for cam in self.cameras:
             ret, frame, detections = cam.read()
             for det in detections:
@@ -96,11 +96,20 @@ class Platform:
                 avg_R_platform, avg_t_platform = self.camToPlatformFrame(cam, avg_R_cam, avg_t_cam)
                 Renderer.draw_pose_panel(frame, cam, "Hatch (Docking Frame)", avg_R_platform, avg_t_platform, 50)
                 poses_platform.append((avg_R_platform, avg_t_platform))
+            frames.append(frame)
 
-            Renderer.renderFrame(frame)
+        if len(frames)>1:
+            h = min(f.shape[0] for f in frames)
+            frames_resized = [cv2.resize(f, (int(f.shape[1]*h/f.shape[0]), h)) for f in frames]
+            combined_frame = np.hstack(frames_resized)
+        else:
+            combined_frame = frames[0]
+        Renderer.renderFrame(combined_frame)
 
         if poses_platform:
             target_R, target_t = self.averagePoses(poses_platform)
+        else:
+            target_R, target_t = None, None
         return target_R, target_t
 
     def camToPlatformFrame(self, cam, pose_R_cam, pose_t_cam):
@@ -109,7 +118,7 @@ class Platform:
         return Transform.to_R_t(T_platformToHatch)
 
     def averagePoses(self, poses):
-        if not poses: return None
+        if not poses: return None, None
         rotations    = [pose[0] for pose in poses]
         translations = [pose[1].reshape(3) for pose in poses]
 
@@ -193,14 +202,14 @@ class Camera:
         # # live vid capture for webcam from laptop
         # self.cap = cv2.VideoCapture(id)
 
-        # Video Test
-        self.cap = cv2.VideoCapture("/mnt/c/Users/maana/Videos/Captures/HatchTest.mp4")
+        # # Video Test
+        # self.cap = cv2.VideoCapture("/mnt/c/Users/maana/Videos/Captures/HatchTest.mp4")
 
-        # # Arducam Initialization
-        # pipeline = ("nvarguscamerasrc sensor-id=0 ! video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080,format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert !  video/x-raw, format=BGR ! appsink")
-        # self.cap = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
+        # Arducam Initialization
+        pipeline = (f"nvarguscamerasrc sensor-id={id} ! video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080,format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert !  video/x-raw, format=BGR ! appsink drop=true max-buffers=1 sync=false")
+        self.cap = cv2.VideoCapture(pipeline, cv2.CAP_GSTREAMER)
         if not self.cap.isOpened():
-            sys.exit("[ERROR] Cannot open Camera")
+            sys.exit("[ERROR] Cannot open Camera {id}")
         
 
         self.detector = Detector(families="tag36h11", nthreads=4, quad_decimate=1,
@@ -220,7 +229,10 @@ class Camera:
 class Renderer:
     @staticmethod
     def renderFrame(frame):
-        cv2.imshow("Hatch 6DOF Targetter", frame)
+        window_name = f"Hatch 6DOF Targetter"
+        cv2.namedWindow(window_name, cv2.WINDOW_NORMAL)
+        cv2.resizeWindow(window_name, 1600,600)
+        cv2.imshow(window_name,frame)
         cv2.waitKey(1)
         # key = cv2.waitKey(1) & 0xFF
         # if key == ord('s'):

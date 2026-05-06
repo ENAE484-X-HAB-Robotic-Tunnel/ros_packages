@@ -12,16 +12,20 @@ class VisionNode(Node):
     def __init__(self):
         super().__init__('vision_system')
         self.publisher_ = self.create_publisher(Pose, 'topic', 10)
-        self.timer = self.create_timer(0.01, self.timer_callback)
+        self.timer = self.create_timer(0.1, self.timer_callback)
 
         # Camera Parameters
-        fx, fy = 800, 800 
-        cx, cy = 300, 200
-        cam_R = np.eye(3); 
-        cam_t = np.array([0, 0, 0])
-        dist_coeffs = np.array([[0.07863, -0.20173, -0.00186, 0.00294, 0.21325]], dtype=np.float64)
-        cam0 = Camera(0, [fx, fy, cx, cy], dist_coeffs, cam_R, cam_t)
-        self.cams = [cam0]
+        fx0, fy0 = 2039.1, 2041.95 
+        cx0, cy0 = 1080, 578.06
+        fx1, fy1 = 2031.7277, 2034.71329
+        cx1, cy1 = 978.261, 505.6937
+        cam_R = np.eye(3); # keep
+        cam_t = np.array([0, 0, 0]) #initial position offset
+        dist_coeffs0 = np.array([[-0.671514210, 5.27436711, -0.00106674849, -0.00608782334, -36.6125773]], dtype=np.float64)
+        dist_coeffs1 = np.array([[-0.61172, 5.30453, -0.000213269, -0.000054, -51.982]], dtype=np.float64)
+        cam0 = Camera(0, [fx0, fy0, cx0, cy0], dist_coeffs0, cam_R, cam_t)
+        cam1 = Camera(1, [fx1, fy1, cx1, cy1], dist_coeffs1, cam_R, cam_t)
+        self.cams = [cam0, cam1]
 
         # Tag Setup
         tag0 = Tag(0, 0.13, 1*math.pi/3)

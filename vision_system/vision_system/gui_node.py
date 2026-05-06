@@ -48,7 +48,24 @@ class PosGUI(Node,QWidget):
         self.ori_label.setText(f"RPY: ({roll:.2f}, {pitch:.2f}, {yaw:.2f})")
 
     def spin_ros(self):
-        rclpy.spin_once(self, timeout_sec=0)
+        try:
+            if rclpy.ok():
+                rclpy.spin_once(self, timeout_sec=0.01)
+            else:
+                self.timer.stop()
+                self.close()
+        except KeyboardInterrupt:
+            self.timer.stop()
+            self.close()
+    def closeEvent(self, event):
+        self.timer.stop()
+
+        if rclpy.ok():
+            self.destroy_node()
+            rclpy.shutdown()
+
+        event.accept()
+        
 
 def main():
     rclpy.init()
